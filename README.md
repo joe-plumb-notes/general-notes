@@ -1,7 +1,8 @@
 # general-notes
 
 ## python notes
-
+<details><summary>python notes</summary>
+<p>
 ### general functions
 
 
@@ -26,6 +27,14 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 ```
 #### notes
-- 
+- </p>
+</details>
 
+## docker notes
+
+<details><summary>docker notes</summary>
+<p>
+stuff about the things
+</p>
+</details>
 
