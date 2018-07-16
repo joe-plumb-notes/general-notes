@@ -47,9 +47,20 @@ taken from https://www.safaribooksonline.com/videos/learning-docker/978149195688
 - We know docker is an abstraction built on top of lower level container technologies, which provides a simple cli and http interface to create and publish container images, and to run these themselves. It provides a way to package an application and all system dependncies into a standardized unit (Docker image). 
 - It is a tool, but also encompasses an ecosystem of other tools and services, e.g. DockerHub (central public repo of docker images).
 - Widley used deployment mechanisim for applications because of the guarantee the container will always run the same regardless of the environment, giving devs parity across dev, test, and prod.
-- 
 
 ## Setup
+- I started by accidentally installing Docker CE in an Ubuntu 16.04 VM following the instructions in the docker docs. I then realised this is not what the course was asking me to do, so followed the docs to install Docker Engine too https://docs.docker.com/cs-engine/1.12/#install-on-ubuntu-1404-lts-or-1604-lts
+- Automatic starting of the docker daemon is achieved using systemd `sudo systemctl enable docker`
+- Check docker working using sample container `sudo docker run rickfast/hello-oreilly`
+- Adding a user to the docker group prevents requirement to run all docker commands with sudo `sudo usermod -aG docker $user` (log out and log back in to have changes take)
+- Another test container `docker run -p 4567:4567 -d rickfast/hello-oreilly-http` runs a web server on port 4567 that returns the 'Hello O'Reilly!' message.
+
+- OS's that aren't Linux cannot run docker natively as docker requires a Linux compatible kernel. Used to have `boot2docker` which was a stripped down Linux image with docker installed, which enabled people running OSX to issue docker commands to a remote docker daemon in a VM. More recently, a series of useful docker tools have been packaged into Docker Toolbox, which can be installed using a simple installer. `boot2docker` is still used, but it is managed by `docker-machine`. *NB: Docker Toolbox is now a legacy desktop solution that has been superceded by Docker for Mac and Docker for Windows. The Docker for Windows application requires Windows 10 which I do not have, so I will continue with docker toolbox and my ubuntu VM side by side*
+- starting docker toolbox using the `Docker Quickstart Terminal`, which launches a fully configured shell, starting a docker host in virtualbox.
+- `default` machine will start with IP `192.168.99.100` - this is the IP of the docker machine. On Linux, this runs on `localhost`
+
+## Docker Machine
+
 
 ## Running/managing docker containers
 
