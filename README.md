@@ -68,9 +68,19 @@ taken from https://www.safaribooksonline.com/videos/learning-docker/978149195688
 - Docker machine is good because it enables people to use docker regarless of their host OS. Alos a nice tool for launching multiple docker hosts (these can be in the cloud as well as locally)
 
 ## Docker Hub
-
+- For distributing docker images - official central registry. There are other registerys, and you can set up your own (artifactory, docker trusted registy).
+- Need a docker hub account to push your own into the registry. 
 
 ## Running/managing docker containers
+### Getting Started
+- Containers typically wrap a single process, and the lifetime of the container is typically tied to the time it takes to run the process assigned to pid 1 within. The command run by the container can be specified by the container, or the user running it.
+- e.g. of specifying the command run by the container `docker run ubuntu pwd` - ubuntu container does not specify a command to be run, so we can run `pwd`. The container will only live for the time it takes to run this command, make it useful for taks that require a specific setup or environment.
+- output is different as the container has it's own isolated view of the operating environment - the ubuntu container has it's own user id space, filesystem, process trees, and networking.
+- How can we investigate the inside of a container without running single commands? `i` flag runs in interactive, and `-t` assigns a terminal (specify the shell you want as well) `docker run -i -t ubuntu /bin/bash`
+- uuid is the hostname of the container - a unique hash, also the container id.
+- has typical file system, but only two processes running (`ps` and `bash` - `bash` is pid 1, which means the containers existance is bound to this process). Can end the container by running `exit`, which quits the bash session and also the container.
+
+### Different ways to run containers
 
 ## Threads vs Processes
 
