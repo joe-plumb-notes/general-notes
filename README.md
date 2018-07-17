@@ -64,7 +64,10 @@ taken from https://www.safaribooksonline.com/videos/learning-docker/978149195688
 - I quickly installed `docker-machine` in my ubuntu VM following [the docs](https://docs.docker.com/machine/install-machine/#install-machine-directly). I think this is going to be a better and easier fit as the rest of the course is on Mac OS. *NB: doing this introduced an issue as I had [conflicting graph-drivers](https://github.com/moby/moby/issues/22685). `systemctl edit docker.service` allowed me to configure the docker startup process and set the `-s` arg to `overlay` which resolved\* the issue*
 - \* This did not resolve the issue. I was able to get the docker daemon started but still encountered problems. I uninstalled and reinstalled Docker CE. Then tried creating my own `docker-machine` but this is failing with `Error creating machine: Error waiting for machine to be running: Maximum number of retries (60) exceeded` - _but that's ok because I can run docker containers natively because I'm in Linux_ right ok the penny dropped, there we go, move along ..
 - see which hosts are running using `docker-machine ls`
-- if working with docker machine, set the machine you want to issue commands to with `eval $(docker-machine env $docker-machine)`
+- if working with docker machine, set the machine you want to issue commands to with `eval $(docker-machine env $docker-machine)`. Get the IP of this machine by issuing `docker-machine ip $MACHINENAME`. Stop the machine with `docker-machine stop $MACHINE`
+- Docker machine is good because it enables people to use docker regarless of their host OS. Alos a nice tool for launching multiple docker hosts (these can be in the cloud as well as locally)
+
+## Docker Hub
 
 
 ## Running/managing docker containers
