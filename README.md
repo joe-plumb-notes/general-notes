@@ -52,7 +52,7 @@ taken from https://www.safaribooksonline.com/videos/learning-docker/978149195688
 - I started by accidentally installing Docker CE in an Ubuntu 16.04 VM following the instructions in the docker docs. I then realised this is not what the course was asking me to do, so followed the docs to install Docker Engine too https://docs.docker.com/cs-engine/1.12/#install-on-ubuntu-1404-lts-or-1604-lts
 - Automatic starting of the docker daemon is achieved using systemd `sudo systemctl enable docker`
 - Check docker working using sample container `sudo docker run rickfast/hello-oreilly`
-- Adding a user to the docker group prevents requirement to run all docker commands with sudo `sudo usermod -aG docker $user` (log out and log back in to have changes take)
+- Adding a user to the docker group prevents requirement to run all docker commands with sudo `sudo usermod -aG docker $USER` (log out and log back in to have changes take)
 - Another test container `docker run -p 4567:4567 -d rickfast/hello-oreilly-http` runs a web server on port 4567 that returns the 'Hello O'Reilly!' message.
 
 - OS's that aren't Linux cannot run docker natively as docker requires a Linux compatible kernel. Used to have `boot2docker` which was a stripped down Linux image with docker installed, which enabled people running OSX to issue docker commands to a remote docker daemon in a VM. More recently, a series of useful docker tools have been packaged into Docker Toolbox, which can be installed using a simple installer. `boot2docker` is still used, but it is managed by `docker-machine`. *NB: Docker Toolbox is now a legacy desktop solution that has been superceded by Docker for Mac and Docker for Windows. The Docker for Windows application requires Windows 10 which I do not have, so I will continue with docker toolbox and my ubuntu VM side by side*
@@ -60,6 +60,11 @@ taken from https://www.safaribooksonline.com/videos/learning-docker/978149195688
 - `default` machine will start with IP `192.168.99.100` - this is the IP of the docker machine. On Linux, this runs on `localhost`
 
 ## Docker Machine
+- Ships with toolbox, allows us to use docker with non-linux based OS's, and launch and manage multiple docker instances from the host machine. 
+- I quickly installed `docker-machine` in my ubuntu VM following [the docs](https://docs.docker.com/machine/install-machine/#install-machine-directly). I think this is going to be a better and easier fit as the rest of the course is on Mac OS. *NB: doing this introduced an issue as I had [conflicting graph-drivers](https://github.com/moby/moby/issues/22685). `systemctl edit docker.service` allowed me to configure the docker startup process and set the `-s` arg to `overlay` which resolved\* the issue*
+- \* This did not resolve the issue. I was able to get the docker daemon started but still encountered problems. I uninstalled and reinstalled Docker CE. Then tried creating my own `docker-machine` but this is failing with `Error creating machine: Error waiting for machine to be running: Maximum number of retries (60) exceeded` - _but that's ok because I can run docker containers natively because I'm in Linux_ right ok the penny dropped, there we go, move along ..
+- see which hosts are running using `docker-machine ls`
+- if working with docker machine, set the machine you want to issue commands to with `eval $(docker-machine env $docker-machine)`
 
 
 ## Running/managing docker containers
