@@ -30,7 +30,7 @@ import matplotlib.pyplot as plt
 - </p>
 </details>
 
-## docker notes
+## Docker notes
 taken from https://www.safaribooksonline.com/videos/learning-docker/9781491956885
 <details><summary>docker notes</summary>
 <p>
