@@ -81,8 +81,28 @@ taken from https://www.safaribooksonline.com/videos/learning-docker/978149195688
 - has typical file system, but only two processes running (`ps` and `bash` - `bash` is pid 1, which means the containers existance is bound to this process). Can end the container by running `exit`, which quits the bash session and also the container.
 
 ### Different ways to run containers
+- specifying just the image name will just run that image. This will run the default command in the image. Can override the default by adding another argument when issuing `docker run`. Additional args after this are passed as arguments to the override command, i.e. `docer run ubuntu ls -l`. Any number of commands can be passed in the command arguments.
+- running a long-iving container from the command line pushes the output of this container to stdout - not ideal as container will exit if we close terminal, ctrl+c, etc. In production scnarios we want the containers to run as background processes. To run them as background processes, use `-d` (detached). This prints a container id to stdout which can be used to execute actions against that container.
+- `docker ps` lists all running containers.
+- Containers can be referenced by image id or name, and if you dont explicitly name your container, docker will auto-assign one. `--name` to name your container - names are useful if you're running a lot of instances of the same container on a docker host, or if using a bridged network, as containers use names to communicate (see networking)
+- `docker stop` to stop the container, don't need to write the whole id
+- `docker restart` to restart a container (takes name)
 
-## Threads vs Processes
+### Containerized Web Applications
+- Long-lived web apps are a common use case. Will run a web app which performs lookup in a key:value store, redis.
+- First, run redis `docker run -d -P --name redis redis`
+- Then start web app - this will need to be able to connect to redis to store and retrieve data. 
+- `docker --link` to connect containers together - allow continers to find each other by ip and port. docker containers are linked by name, and docker injects a set of env vars into the container that can be used to connect them.
+- `docker run --link redis -i -t ubuntu /bin/bash` to start an ubuntu container and link to redis .. looking at `env`, cna see `REDIS_PORT_6379_TCP_ADDR=172.17.0.2`, which gives the IP of the redis container. This format/naming covention ($NAME_PORT_$PORT_TCP_ADDR) means we have to know the name of the container and the port, to connect to it. The web app uses this env variable to connect to redis, and retrieve and store data. 
+- Run and link the web app to redis .. `docker run -d --link redis --name web rickfast/oreilly-simple-web-app`
+- Docker links are *deprecated*
+- Need to map the port using `-p` on container startup - doesn't matter that the application in the container is bound on 4567, we cannot access it on the docker host without mapping the port. first is port on docker host, second is container port to map. So above command becomes `docker run -d --link redis --name web -p 4567:4567 rickfast/oreilly-simple-web-app`
+- _What if deploying a web app on a machine and we dont know what ports are available?_ Cant be guaranteed a well known port for every appliaction .. `-P` binds all exposed ports to a randomly availbale port on the docker host - v useful for a dymanic mutlitenant environment. Once used, can use `docker ps -l` which lists the last started container, and you can see the port .. can also use `docker port $NAME` which tells the port that the container is available at on the docker host.
+
+## Configuring Containerized Applications
+
+
+# Threads vs Processes
 
   
 </p>
