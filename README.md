@@ -99,8 +99,19 @@ taken from https://www.safaribooksonline.com/videos/learning-docker/978149195688
 - Need to map the port using `-p` on container startup - doesn't matter that the application in the container is bound on 4567, we cannot access it on the docker host without mapping the port. first is port on docker host, second is container port to map. So above command becomes `docker run -d --link redis --name web -p 4567:4567 rickfast/oreilly-simple-web-app`
 - _What if deploying a web app on a machine and we dont know what ports are available?_ Cant be guaranteed a well known port for every appliaction .. `-P` binds all exposed ports to a randomly availbale port on the docker host - v useful for a dymanic mutlitenant environment. Once used, can use `docker ps -l` which lists the last started container, and you can see the port .. can also use `docker port $NAME` which tells the port that the container is available at on the docker host.
 
-## Configuring Containerized Applications
+### Configuring Containerized Applications
+- Previously would use configuration files to configure server application using tools like chef or puppet. Templatize a config file and drop it on the server before the application launches. Docker image is pre-baked, so we dont necesserily want another layer with environment specific configuration, which would require separate image artifacts for the environment our container would run in.
+- Preferred config method for containerized apps is to pass in at launch time, in the form of standard environment variables.
+- This puts environment configuration burden on the launcher - `-e` flag enables this. Each env variable must be set using it's own `-e` flag
+```
+joe@ubuntu:~$ docker run -e "HELLO=JOE" ubuntu /bin/bash -c export
+declare -x HELLO="JOE"
+...
+```
+- `docker inspect` gives details about the container
 
+### Container Lifecycle
+- `docker restart` runs the same container rather than starting a new one. Discussed graceful shutdown of containers and allowing time for containers to do so, using the `docker stop --time` param.
 
 # Threads vs Processes
 
