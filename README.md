@@ -123,7 +123,9 @@ declare -x HELLO="JOE"
   - Centralised logging and debugging should be used in production to manage.
   
 ## Docker Images
-
+- Building and sharing our own images is where it gets interesting!
+- Packaging your own production applications is a major use case for docker images. Container must only contain linux libraries and binaries. Flavor will dictate which libraries and binaries it will use. Need to map `flask` port to the docker host in order to expose it. (see _Containerized Web Applications_ section above for more on this)
+- Docker images are built from layers, which are immutable (non-changing), similar to a git commit. 
 
 # Threads vs Processes
 
