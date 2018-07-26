@@ -112,6 +112,18 @@ declare -x HELLO="JOE"
 
 ### Container Lifecycle
 - `docker restart` runs the same container rather than starting a new one. Discussed graceful shutdown of containers and allowing time for containers to do so, using the `docker stop --time` param.
+- If something causes a container to exit, can use the `--restart` policy flag to automatically case it to restart if it exits. Takes a number of args (always, unless stopped (only restart if stops unexpectedly), on failure (if exists with non-0 code) `docker run -d -p 4567:4567 --name timebomb --restart unless-stopped rickfast/oreilly-time-bomb`. To make it not restart, explicity stop it or kill it ourself. 
+
+### Debugging Containers
+- Can configure docker to output logs to logging applications (fluentd, splunk). Withg access to the docker host, there are a number of ways to debug a container.
+  - see which containers are running `docker ps`, to see what is running. `ps -a` to see stopped containers. `-l` will show the last run container.
+  - output of a container i.e. logs `docker logs $NAME` show the most recent logger output. `-f` to follow the logs in the terminal until ctrl+c.
+  - Local IP/other information about the container? `docker inspect` give json payload of info about the container. Can extract information from here using the `--format` flag, e.g. `docker inspect --format='{{.NetworkSettings.IPAddress}}' redis`. This uses Go's template support. dot notation represents the json properties, where `NetworkSettings` is top level object, containing field `IPAddress`.
+  - Get into container using `-i` and `-t` as we saw earlier .. however this isn't incredibly useful as we're starting a new copy of the container with /bin/bash running as pid 1 .. so how can we debug if it's already running? `docker exec` will enable to run a secondary process in the container `docker exec -i -t redis /bin/bash`
+  - Centralised logging and debugging should be used in production to manage.
+  
+## Docker Images
+
 
 # Threads vs Processes
 
