@@ -125,7 +125,80 @@ declare -x HELLO="JOE"
 ## Docker Images
 - Building and sharing our own images is where it gets interesting!
 - Packaging your own production applications is a major use case for docker images. Container must only contain linux libraries and binaries. Flavor will dictate which libraries and binaries it will use. Need to map `flask` port to the docker host in order to expose it. (see _Containerized Web Applications_ section above for more on this)
-- Docker images are built from layers, which are immutable (non-changing), similar to a git commit. 
+- Docker images are built from layers, which are immutable (non-changing), similar to a git commit. These aren't changed, we just create new ones. Always re-use layers that don't change, and if we do diverge, we create new layers.
+- Images are created by running containers, changing their state, and then saving the new state to disk. Only the differences introduced in the new state are saved, which means the state can be applied or reverted from the layer below. Preferred method for applying these changes is via the `dockerfile`, a list of instructions to be performed on an image to produce new layers. Each layer correspondes to an instruction from the dockerfile. Dockerfile ends up looking like:
+```
+FROM ubuntu:15.10
+RUN apt-get install python
+RUN pip install flask 
+ADD app.py # add source code from my machine to the container using ADD
+EXPOSE 5000
+ENTRYPOINT python app.py # default coimmand to run so user doesn't need to worry about image internals.
+```
+- Can then put this in version control and treat it like any other code - version it, create automated builds to push and publish images hen the dockerfile changes. 
+
+### ... on Docker Hub
+- Easiest way to find existing images. Search, find .. description of what the image contains, size, etc. 
+- Alpine Linux, lightweight base image rather than using ubuntu or fedora (bloated). Info on usage and config. 
+- Official repos have no username (i.e. single contributor). Curated by docker, follows best practices inc. security. Offial images are best, kept up to date, etc.. Star = like, remind, save etc. 
+- Tags are like versions. `latest` tag typically attached, will default to this. 
+
+## building images
+- Any can be used as a base, so depends what you want to build. 
+- `docker search` to search, `docker images` to see what is available on the docker host
+- can create images from a running container, or create using dockerfile - second is preferred as can be versioned and reproduced
+```
+docker run -i -t alpine /bin/sh
+apk update
+apk add nodejs
+mkdir average
+cd average
+vi average.js
+```
+- add this script
+```
+#!/usr/bin/env node
+var sum = 0;
+var count = 0;
+process.argv.forEach(function (val, index, array) { 
+    if(index > 1) {
+        sum += parseInt(val);
+        count ++;
+  }
+});
+console.log(sum / count);
+```
+- then give permissions, and test
+```
+chmod +x average.js
+./average.js 3 4 5
+```
+- Can now commit these changes to our running container which will create a new image containing these changes. To commit them, we need a container ID, which is the same as the hostname
+- To commit the changes, use `docker commit`. Takes a few flags - `-m` for commit messages. _This is an inefficient way to create docker images._
+```
+joe@ubuntu:~$ docker commit -m "installed node and wrote average app" 3cf4a81f2e02
+sha256:9a80c75602aec13f50f37747534b28b2d5ac649c58fe24c1ff3febb6e24df537
+joe@ubuntu:~$ docker run 9a80 average/average.js 3 4 5
+4
+```
+- this approach has a number of challenges though .. cant easily specify node as the default entry point or command for the container, so have to know and care about the name of the program, and its location on the filesystem. No artifact that describes how it was created. Infrastructure as cade gives visibility into the internls of the servers, and gives ability to change and test like normal sw. 
+
+### docker build
+- relies on dockerfile, which specifies the instructions to build the image. The commands we ran above can be specified in the dockerfile, which would give a shareable, reproducabale and automatable recipe to build the image. Each line is an atomic commit, and each change is cached as the image builds. 
+- changing an instruction in the dockerfile will only cause the layers at and after the change to be rebuilt. So you dont have to start from scratch every time you build.
+- `FROM` is always first - define the base image.
+- `MAINTAINER` defines the owner - no impact on how the container runs.
+- `docker build .` to run the Dockerfile from current wd. Can see the image IDs printed below each step in the build process
+- Intermediate containers are removed as each step is run in a container, and the container is commited to create the new image.
+- `RUN apk update && apk add nodejs` update and add on the same line, to have both happen in one atomic commit
+- to add a file to the building docker image, it must reside in the same dir, or one below.
+- `WORKDIR` sets current working dir for build 
+- `ENTRYPOINT` defines the main process that will run in the container. The command specified here is pid 1. entrypoint is specified as json list, called exec form. this does not invoke command cell, so cannnot include env variables to be interpolated in the command. With the entrypoint specified, arguments passed in when `docker run` is executed are passed to the entry point as arguments
+- `docker build -t` to tag (i.e. name) the container
+
+### web application images
+
+
 
 # Threads vs Processes
 
