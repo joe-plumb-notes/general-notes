@@ -198,11 +198,31 @@ joe@ubuntu:~$ docker run 9a80 average/average.js 3 4 5
 
 ### web application images
 
+### COMMAND (CMD) and ENTRYPOINT
+- 2 ways of defining a default execution in a Dockerfile.
+- For a container to be runnabale without specifying an executable at the end of the docker run command, the dockerfile that produced the container image will need one or the other instruction at the end.
+-  
 
+### Build triggers
 
 # Threads vs Processes
 
   
+</p>
+
+<p>
+# Kubernetes
+
+# Intro
+- Automation - which includes
+automatic scheduling of those components to our servers, automatic configuration,
+supervision, and failure-handling. This is where Kubernetes comes in.
+- Type 1 hypervisors don't use a host OS. Type 2 do.
+- TODO: read about x86 architecture and how kernel issues and performs instructions on CPU
+- Benefit of VMs is the full isolation they provide, as each VM runs its wn kernel - containers are all calling the same kernel which can pose a security risk.
+- When running a great number of isolated processes on the same machine, containers are a much better choice because of the low overheads - each VM has to run it's own set of system services, which containers do not as they run in the same OS. Containers also require no booting - a process run in a container starts up immediately.
+- _Linux Namespaces_ and _control groups_ `cgroups` are the mechanisms used to isolate processes in containers. _Namespaces_ make sure each process sees its own view of the system, and cgroups limit the amount of resources the process can consume,
+- System has as master node and _n_ worker nodes. When a list of apps is submitted to the master, k8s deploys them to the cluster of worker nodes. The node it lands 
 </p>
 </details>
 
