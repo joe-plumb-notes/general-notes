@@ -142,6 +142,7 @@ ENTRYPOINT python app.py # default coimmand to run so user doesn't need to worry
 - Alpine Linux, lightweight base image rather than using ubuntu or fedora (bloated). Info on usage and config. 
 - Official repos have no username (i.e. single contributor). Curated by docker, follows best practices inc. security. Offial images are best, kept up to date, etc.. Star = like, remind, save etc. 
 - Tags are like versions. `latest` tag typically attached, will default to this. 
+- unsurprisingly, `docker push` allows 
 
 ## building images
 - Any can be used as a base, so depends what you want to build. 
@@ -200,18 +201,26 @@ joe@ubuntu:~$ docker run 9a80 average/average.js 3 4 5
 
 ### COMMAND (CMD) and ENTRYPOINT
 - 2 ways of defining a default execution in a Dockerfile.
-- For a container to be runnabale without specifying an executable at the end of the docker run command, the dockerfile that produced the container image will need one or the other instruction at the end.
--  
+- For a container to be runnabale without specifying an executable at the end of the docker run command, the _Dockerfile_ that produced the container image will need one or the other instruction at the end.
+-  Without one or the other in the Dockerfile, attempting to run a docker container without a command will result in an error.
+- Issuing a command will override the `CMD` instruction from the dockerfile.
+- `ENTRYPOINT` defines the default executable for the image - main difference is that this executable cannot be overridden by passing in a command at the end of `docker run` - additional arguments are passed to the entrypoint as arguments.
+- `ctrl+c` sends sigterm command to container - since the ping command is pid 1 the container shuts down.
+- ENTRYPOINT is specified as a json list - this is known as exec form - this runs the command directly, without using a shell, which means it will always be pid 1, and shut down gracefully using sig term.
+- Shell form can be specified too - command token separated by spaces, which runs your command in shell. That means environment variables can be resolved in the command, for example `CMD echo $PATH`
 
 ### Build triggers
+- Some images include instructions to only be run if the image is used as a base image. Specify commands that only specify for downstream build using the `ONBUILD` instruction. Many official images provide this that will auto-add code to the image, which can make usage much easier.
 
 # Threads vs Processes
 
   
 </p>
+</details>
 
+<details><summary>k8s notes</summary>
+Notes from reading 'Kubernetes in Action', Marko Lukša (Manning)
 <p>
-# Kubernetes
 
 # Intro
 - Automation - which includes
