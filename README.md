@@ -213,7 +213,7 @@ joe@ubuntu:~$ docker run 9a80 average/average.js 3 4 5
 - Some images include instructions to only be run if the image is used as a base image. Specify commands that only specify for downstream build using the `ONBUILD` instruction. Many official images provide this that will auto-add code to the image, which can make usage much easier.
 
 ### Pushing images
-- 
+- `docker push` to send your container to a docker repo. Docker Hub by default, can also push to IBM Cloud Container Service.
 
   
 </p>
