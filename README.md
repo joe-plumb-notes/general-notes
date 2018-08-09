@@ -219,6 +219,8 @@ joe@ubuntu:~$ docker run 9a80 average/average.js 3 4 5
 </p>
 </details>
 
+## Kubernetes notes
+
 <details><summary>k8s notes</summary>
 Notes from reading 'Kubernetes in Action', Marko Lukša (Manning)
 <p>
@@ -234,5 +236,49 @@ supervision, and failure-handling. This is where Kubernetes comes in.
 - _Linux Namespaces_ and _control groups_ `cgroups` are the mechanisms used to isolate processes in containers. _Namespaces_ make sure each process sees its own view of the system, and cgroups limit the amount of resources the process can consume,
 - System has as master node and _n_ worker nodes. When a list of apps is submitted to the master, k8s deploys them to the cluster of worker nodes. The node it lands 
 </p>
+</details>
+
+## Java notes
+
+<details><summary>Java/SpringBoot notes</summary>
+Notes from https://www.safaribooksonline.com/videos/building-microservices-with/9780134678658/
+<p>
+
+# SpringBoot
+- SpringBoot available on cli, or using http://start.spring.io
+- Write a quick groovy script (spring/hello-world.groovy) and execute with `spring run hello-world.groovy` - we get a web server on localhost that returns our string. Can issue other commands like:
+    - `test` to run a script test
+    - `grab` to download a spring groovy script's dependencies
+    - `jar` to create a jar file from the groovy script
+    - `init` to initialize a new project (nice). See `spring help init` for more info. `spring init --list` shows other available dependencies for use.
+- `@RestController` adds a series of imports when we run the script
+- Spring also needs to download the dependencies that it needs .. inferred from the annotations. This uses `@Grab` under the covers - essentially a built-in Maven.
+- Adds in `@EnableAutoConfiguration`, which looks at the app and tries to configure the app as best it can. With Java we will have to add this ourselves, but for groovy-cli it does this for us. 
+- Auto adds a main method too, so we can run the application straight away.
+
+- Not a code generation tool!
+
+- We've looked at the `web` starter `pom.xml`, but there are others available. They ar enot just for getting started, they are designed for production dependencies. 
+- Executable JAR files are a nice way to create self packaged executable programs. `java -jar target/my-app-1.0.0.jar` to run, `spring jar myapp.jar %files to include%` Cloud friendly, to land in a container and push up to a service. Known as fat JARs .
+
+- Keeping config separate from codebase is important and one of the twelve priniciples of 12FA (https://12factor.net/config). Mechanisms to replace key:value pairs of credentials at run time from a property file.
+- `Environment` and `PropertySource` abstraction provide an injectable object that code in Spring can use to ask questions about the env.
+- Any config value can be plugged in and derived using `PropertySource`.
+
+### Connecting to and consuming services
+- The app is the app .. but pretty soon going to want to connect to other things. Will use `env vars` to connect to them, presumably delivering these into the app at runtime using the above approach.
+- Env variables will tell you how to connect to a service that you've bound to your app. This means you can de-reference existing properties to point to env variables.
+- Also `spring-cloud-connectors` which supports cf and heroku.
+
+## Data and Microservices with Spring
+### Contextualize your microservices data
+- Do not use your database:
+    - as a synchronization layer
+    - to share data across different microservices each talking to a different database.
+- Database needs to belong to a microservice, and if you need data from that db, call the microservice and have it return the data.
+- Keeping data associated with the microservice is known as _bounded context_, which describes the concept of keeping a boundary around applicable parts of your data. 
+- Can also then choose the technology that best supports that kind of data, known as _polygot persistance_. 
+### Understand Spring Data
+- 
 </details>
 
