@@ -27,7 +27,18 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 ```
 #### notes
-- </p>
+- Simple time series linechart
+```
+x = pd.to_datetime(df['_time'])
+y = df['Sum']
+
+plt.plot(x,y)
+plt.gcf().autofmt_xdate()
+plt.gcf().set_size_inches(18.5, 10.5)
+plt.show()
+```
+
+</p>
 </details>
 
 ## Docker notes
