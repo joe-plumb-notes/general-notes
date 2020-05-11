@@ -12,6 +12,34 @@
 #### notes
 - [`pandas.melt`](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.melt.html) - function to unpivot a dataframe into a format where one or more columns are identifier variables (id_vars), while all other columns, considered measured variables.
 - [`.nunique()`](http://pandas.pydata.org/pandas-docs/stable/generated/pandas.core.groupby.SeriesGroupBy.nunique.html) - returns count of unique values from a column, e.g. `df1['Region'].nunique()`
+### pyspark
+#### Read file(s)
+```
+df = spark.read \
+  .option("HEADER", True) \
+  .option("inferSchema", True) \
+  .csv("example.csv")
+```
+#### EDA/data prep
+- `df.describe()` for mean, std dev, counts etc for each column
+- `from pyspark.ml.feature import VectorAssembler`, `assembler = VectorAssembler(inputCols=df.columns, outputCol="features")` then `featurizeddf = assembler.transform(df)` 
+- `from pyspark.ml.stat import Correlation` then `pearsonCorr = Correlation.corr(df, 'features').collect()[0][0]`
+- Scatter matrix (using python):
+```
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+
+fig, ax = plt.subplots()
+pd_df = df.toPandas()
+
+pd.plotting.scatter_matrix(pd_df, figsize=(10, 10))
+
+display(fig.figure)
+```
+- train/test split with `df.randomSplit([0.8, 0.2], seed=12)`
+- add a column to your dataframe with `df.withColumn('newcolalias', newcol)`
+
 
 ### numpy
 #### init
@@ -37,6 +65,12 @@ plt.gcf().autofmt_xdate()
 plt.gcf().set_size_inches(18.5, 10.5)
 plt.show()
 ```
+
+### PCA (principal component analysis)
+- Used to identify features of importance, reduce number of features in the dataset, visualise cuts of the data to understand the importance of these features in more detail.. 
+- Important to standardize the data before you investigate. PCA maximises the variance so normalization is required otherwise features can dominate purely because of their scale. 
+- Visualising pca output allows you to gain an intiative understanding of the features and their predictive importance. 
+
 
 </p>
 </details>
@@ -291,5 +325,24 @@ Notes from https://www.safaribooksonline.com/videos/building-microservices-with/
 - Can also then choose the technology that best supports that kind of data, known as _polygot persistance_. 
 ### Understand Spring Data
 - 
+
+### SpringKafka
+- https://spring.io/projects/spring-kafka
+- There is a KafkaTemplate that you can use to house your business logic
+- Local dev setup recommendations:
+  - Got to stepping on each others toes.. so, start kafka on your local machine - Kafka cluster, Zookeeper, Confluent Schema Registry, Kafka manager (by yahoo) to show what is going on on your local cluster.
+  - CI tools - Kafka CLI, Confluent CLI for Avro
+  - Custom CLI producer
+  - UI tools - confluent control center, kafka manager (yahoo)
+- Docker Compose to run their containers locally
+- Kafka brokers at version 2.3.1 can communicate with older kafka clients. 
+- Spring boot is opinionated about dependency management
+- *Deserialization exception* scenario - if you publish a message to the broker that the consumer cannot deserialize, it will flood the broker with log messages, and flood the disk.
+  - Don't want to wait until retention period has ended..
+  -
+  -
+  - Configure ErrorHandlingDeserializer2 (Provided by Spring Kafka)
+  - Serialized data is just bytes. Producer microbatches, manages the serialization and compression. 
+  - Broker is not responsible for type checking or schema validation.
 </details>
 
