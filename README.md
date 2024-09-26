@@ -346,3 +346,39 @@ Notes from https://www.safaribooksonline.com/videos/building-microservices-with/
   - Broker is not responsible for type checking or schema validation.
 </details>
 
+## sql notes
+<details><summary>sql notes</summary>
+<p>
+  
+```
+-- Get query names and owning db users
+SELECT db.name AS [DB User], s.name AS [Schema]
+FROM sys.database_principals db
+JOIN sys.schemas s ON s.principal_id = db.principal_id
+
+-- Listing users and their roles in SQL Server
+select dp.NAME AS principal_name,
+       dp.type_desc AS principal_type_desc,
+       o.NAME AS object_name,
+       p.permission_name,
+       p.state_desc AS permission_state_desc
+from   sys.database_permissions p
+left   OUTER JOIN sys.all_objects o
+on     p.major_id = o.OBJECT_ID
+inner  JOIN sys.database_principals dp
+on     p.grantee_principal_id = dp.principal_id
+
+-- Get AAD Object IDs for DB users
+SELECT
+	DP.name
+	,DP.principal_id
+	,DP.type
+	,DP.type_desc
+	,DP.SID
+	,OBJECTID = CONVERT(uniqueidentifier, DP.SID)
+FROM SYS.database_principals DP
+WHERE DP.type IN ('S','X','E')
+```
+
+</p>
+</details>
